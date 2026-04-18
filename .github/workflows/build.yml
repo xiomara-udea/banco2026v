@@ -6,6 +6,7 @@ on:
       - main
 
 jobs:
+
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -29,3 +30,39 @@ jobs:
 
       - name: Run Tests
         run: mvn -B test
+
+  sonar:
+    name: SonarCloud Analysis
+    needs: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache SonarCloud
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Analyze with SonarCloud
+        run: mvn -B verify sonar:sonar \
+          -Dsonar.projectKey=xiomara-udea_banco2026v \
+          -Dsonar.organization=xiomara-udea \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
