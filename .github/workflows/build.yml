@@ -61,8 +61,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Analyze with SonarCloud
-        run: mvn -B verify sonar:sonar \
-          -Dsonar.projectKey=xiomara-udea_banco2026v \
-          -Dsonar.organization=xiomara-udea \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=xiomara-udea_banco2026v -Dsonar.organization=xiomara-udea -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
