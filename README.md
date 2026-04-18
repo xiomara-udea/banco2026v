@@ -1,4 +1,4 @@
-
+[![CI/CD Pipeline](https://github.com/xiomara-udea/banco2026v/actions/workflows/build.yml/badge.svg)](https://github.com/xiomara-udea/banco2026v/actions/workflows/build.yml)
 
 BIENVENIDO A MI APLICATION
 
