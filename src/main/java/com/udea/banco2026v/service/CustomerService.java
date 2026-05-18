@@ -17,7 +17,7 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    // ✅ Obtener todos los clientes
+    // Obtener todos los clientes
     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
@@ -25,14 +25,14 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ Obtener cliente por ID
+    // Obtener cliente por ID
     public CustomerDTO getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
         return mapToDTO(customer);
     }
 
-    // ✅ Crear cliente
+    // Crear cliente
     public CustomerDTO createCustomer(CustomerDTO dto) {
         Customer customer = new Customer();
         customer.setFirstName(dto.getFirstName());
@@ -44,7 +44,7 @@ public class CustomerService {
         return mapToDTO(saved);
     }
 
-    // ✅ Actualizar cliente
+    // Actualizar cliente
     public CustomerDTO updateCustomer(Long id, CustomerDTO dto) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
@@ -58,7 +58,7 @@ public class CustomerService {
         return mapToDTO(updated);
     }
 
-    // ✅ Borrar cliente
+    // Borrar cliente
     public void deleteCustomer(Long id) {
         if (!customerRepository.existsById(id)) {
             throw new RuntimeException("Cliente no existe");

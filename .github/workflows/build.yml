@@ -33,7 +33,6 @@ jobs:
       - name: Run Tests
         run: mvn -B test
 
-
   sonar:
     name: SonarCloud Analysis
     needs: tests
