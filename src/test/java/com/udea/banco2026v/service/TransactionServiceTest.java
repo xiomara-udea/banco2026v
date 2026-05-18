@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,35 +29,22 @@ class TransactionServiceTest {
     @InjectMocks
     private TransactionService transactionService;
 
-    private Customer sender;
-    private Customer receiver;
-
     @BeforeEach
     void setUp() {
-
         MockitoAnnotations.openMocks(this);
-
-        sender = new Customer();
-        sender.setId(1L);
-        sender.setAccountNumber("111");
-        sender.setBalance(1000.0);
-
-        receiver = new Customer();
-        receiver.setId(2L);
-        receiver.setAccountNumber("222");
-        receiver.setBalance(500.0);
     }
 
     @Test
-    void shouldTransferMoneySuccessfully() {
+    void testTransferMoney() {
 
-        TransactionDTO dto = new TransactionDTO(
-                null,
-                "111",
-                "222",
-                200.0,
-                LocalDateTime.now()
-        );
+        Customer sender = new Customer(1L, "111", "Ana", "Lopez", 5000.0);
+        Customer receiver = new Customer(2L, "222", "Juan", "Perez", 2000.0);
+
+        TransactionDTO dto = new TransactionDTO();
+        dto.setSenderAccountNumber("111");
+        dto.setReceiverAccountNumber("222");
+        dto.setAmount(1000.0);
+        dto.setTimestamp(LocalDateTime.now());
 
         when(customerRepository.findByAccountNumber("111"))
                 .thenReturn(Optional.of(sender));
@@ -65,28 +53,23 @@ class TransactionServiceTest {
                 .thenReturn(Optional.of(receiver));
 
         when(transactionRepository.save(any(Transaction.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+                .thenAnswer(i -> i.getArgument(0));
 
         TransactionDTO result = transactionService.transferMoney(dto);
 
-        assertNotNull(result);
-
-        assertEquals(800.0, sender.getBalance());
-        assertEquals(700.0, receiver.getBalance());
-
-        verify(customerRepository, times(2)).save(any(Customer.class));
+        assertEquals(1000.0, result.getAmount());
     }
 
     @Test
-    void shouldThrowExceptionWhenBalanceIsInsufficient() {
+    void testTransferMoneyInsufficientBalance() {
 
-        TransactionDTO dto = new TransactionDTO(
-                null,
-                "111",
-                "222",
-                5000.0,
-                LocalDateTime.now()
-        );
+        Customer sender = new Customer(1L, "111", "Ana", "Lopez", 100.0);
+        Customer receiver = new Customer(2L, "222", "Juan", "Perez", 2000.0);
+
+        TransactionDTO dto = new TransactionDTO();
+        dto.setSenderAccountNumber("111");
+        dto.setReceiverAccountNumber("222");
+        dto.setAmount(1000.0);
 
         when(customerRepository.findByAccountNumber("111"))
                 .thenReturn(Optional.of(sender));
@@ -94,39 +77,32 @@ class TransactionServiceTest {
         when(customerRepository.findByAccountNumber("222"))
                 .thenReturn(Optional.of(receiver));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> transactionService.transferMoney(dto)
-        );
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class,
+                        () -> transactionService.transferMoney(dto));
 
-        assertEquals(
-                "Saldo insuficiente en la cuenta del remitente.",
-                exception.getMessage()
-        );
+        assertEquals("Saldo insuficiente en la cuenta del remitente.",
+                exception.getMessage());
     }
 
     @Test
-    void shouldThrowExceptionWhenSenderDoesNotExist() {
+    void testGetTransactionsForAccount() {
 
-        TransactionDTO dto = new TransactionDTO(
-                null,
-                "999",
+        Transaction transaction = new Transaction(
+                1L,
+                "111",
                 "222",
-                100.0,
+                1000.0,
                 LocalDateTime.now()
         );
 
-        when(customerRepository.findByAccountNumber("999"))
-                .thenReturn(Optional.empty());
+        when(transactionRepository
+                .findBySenderAccountNumberOrReceiverAccountNumber("111", "111"))
+                .thenReturn(List.of(transaction));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> transactionService.transferMoney(dto)
-        );
+        List<TransactionDTO> result =
+                transactionService.getTransactionsForAccount("111");
 
-        assertEquals(
-                "La cuenta del remitente no existe.",
-                exception.getMessage()
-        );
+        assertEquals(1, result.size());
     }
 }

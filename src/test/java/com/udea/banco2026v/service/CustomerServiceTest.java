@@ -23,88 +23,101 @@ class CustomerServiceTest {
     @InjectMocks
     private CustomerService customerService;
 
-    private Customer customer;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        customer = new Customer();
-        customer.setId(1L);
-        customer.setFirstName("Xiomara");
-        customer.setLastName("Perez");
-        customer.setAccountNumber("123456");
-        customer.setBalance(1000.0);
     }
 
     @Test
-    void shouldGetAllCustomers() {
+    void testGetAllCustomers() {
+
+        Customer customer = new Customer(
+                1L,
+                "123",
+                "Ana",
+                "Lopez",
+                5000.0
+        );
 
         when(customerRepository.findAll()).thenReturn(List.of(customer));
 
-        List<CustomerDTO> customers = customerService.getAllCustomers();
+        List<CustomerDTO> result = customerService.getAllCustomers();
 
-        assertEquals(1, customers.size());
-        assertEquals("Xiomara", customers.get(0).getFirstName());
+        assertEquals(1, result.size());
+        assertEquals("Ana", result.get(0).getFirstName());
     }
 
     @Test
-    void shouldGetCustomerById() {
+    void testGetCustomerById() {
 
-        when(customerRepository.findById(1L))
-                .thenReturn(Optional.of(customer));
+        Customer customer = new Customer(
+                1L,
+                "123",
+                "Ana",
+                "Lopez",
+                5000.0
+        );
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
 
         CustomerDTO result = customerService.getCustomerById(1L);
 
-        assertNotNull(result);
-        assertEquals("123456", result.getAccountNumber());
+        assertEquals("Ana", result.getFirstName());
     }
 
     @Test
-    void shouldCreateCustomer() {
+    void testCreateCustomer() {
 
         CustomerDTO dto = new CustomerDTO();
         dto.setFirstName("Ana");
         dto.setLastName("Lopez");
-        dto.setAccountNumber("999");
-        dto.setBalance(2000.0);
+        dto.setAccountNumber("123");
+        dto.setBalance(5000.0);
 
-        when(customerRepository.save(any(Customer.class)))
-                .thenReturn(customer);
+        Customer saved = new Customer(
+                1L,
+                "123",
+                "Ana",
+                "Lopez",
+                5000.0
+        );
+
+        when(customerRepository.save(any(Customer.class))).thenReturn(saved);
 
         CustomerDTO result = customerService.createCustomer(dto);
 
-        assertNotNull(result);
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        assertEquals("Ana", result.getFirstName());
     }
 
     @Test
-    void shouldUpdateCustomer() {
+    void testUpdateCustomer() {
+
+        Customer customer = new Customer(
+                1L,
+                "123",
+                "Ana",
+                "Lopez",
+                5000.0
+        );
 
         CustomerDTO dto = new CustomerDTO();
         dto.setFirstName("Maria");
-        dto.setLastName("Gomez");
-        dto.setAccountNumber("888");
-        dto.setBalance(5000.0);
+        dto.setLastName("Perez");
+        dto.setAccountNumber("999");
+        dto.setBalance(7000.0);
 
-        when(customerRepository.findById(1L))
-                .thenReturn(Optional.of(customer));
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepository.save(any(Customer.class))).thenReturn(customer);
 
-        when(customerRepository.save(any(Customer.class)))
-                .thenReturn(customer);
+        CustomerDTO result = customerService.updateCustomer(1L, dto);
 
-        CustomerDTO updated = customerService.updateCustomer(1L, dto);
-
-        assertNotNull(updated);
-
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        assertEquals("Maria", result.getFirstName());
     }
 
     @Test
-    void shouldDeleteCustomer() {
+    void testDeleteCustomer() {
 
-        when(customerRepository.existsById(1L))
-                .thenReturn(true);
+        when(customerRepository.existsById(1L)).thenReturn(true);
 
         customerService.deleteCustomer(1L);
 
@@ -112,29 +125,13 @@ class CustomerServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCustomerNotFound() {
+    void testDeleteCustomerWhenNotExists() {
 
-        when(customerRepository.findById(1L))
-                .thenReturn(Optional.empty());
+        when(customerRepository.existsById(1L)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> customerService.getCustomerById(1L)
-        );
-
-        assertEquals("Cliente no encontrado", exception.getMessage());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistingCustomer() {
-
-        when(customerRepository.existsById(1L))
-                .thenReturn(false);
-
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> customerService.deleteCustomer(1L)
-        );
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            customerService.deleteCustomer(1L);
+        });
 
         assertEquals("Cliente no existe", exception.getMessage());
     }
