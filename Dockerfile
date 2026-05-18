@@ -1,4 +1,10 @@
-FROM openjdk:11-ea-19-jre-slim
+FROM eclipse-temurin:17-jdk-jammy
+
+WORKDIR /app
+
+COPY target/banco2026v.jar app.jar
+
 EXPOSE 8080
-ADD target/banco2026v.jar banco2026v.jar
-ENTRYPOINT ["java","-jar","/banco2026v.jar"]
+
+ENTRYPOINT ["java","-jar","app.jar"]
+

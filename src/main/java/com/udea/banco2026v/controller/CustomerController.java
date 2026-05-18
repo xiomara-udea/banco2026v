@@ -17,19 +17,19 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    // ✅ Obtener todos los clientes
+    // Obtener todos los clientes
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAllCustomers());
     }
 
-    // ✅ Obtener un cliente por ID
+    //Obtener un cliente por ID
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomerById(id));
     }
 
-    // ✅ Crear un nuevo cliente
+    // Crear un nuevo cliente
     @PostMapping
     public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
         if (customerDTO.getBalance() == null) {
@@ -39,7 +39,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.createCustomer(customerDTO));
     }
 
-    // ✅ Borrar cliente
+    // Borrar cliente
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);

@@ -4,6 +4,11 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=coverage)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
 
 BIENVENIDO A MI APLICATION
 
