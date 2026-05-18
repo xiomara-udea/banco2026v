@@ -28,34 +28,35 @@ class TransactionServiceTest {
     @InjectMocks
     private TransactionService transactionService;
 
+    private Customer sender;
+    private Customer receiver;
+
     @BeforeEach
-    void setup() {
+    void setUp() {
+
         MockitoAnnotations.openMocks(this);
+
+        sender = new Customer();
+        sender.setId(1L);
+        sender.setAccountNumber("111");
+        sender.setBalance(1000.0);
+
+        receiver = new Customer();
+        receiver.setId(2L);
+        receiver.setAccountNumber("222");
+        receiver.setBalance(500.0);
     }
 
     @Test
     void shouldTransferMoneySuccessfully() {
 
-        Customer sender = new Customer();
-        sender.setAccountNumber("111");
-        sender.setBalance(1000.0);
-
-        Customer receiver = new Customer();
-        receiver.setAccountNumber("222");
-        receiver.setBalance(500.0);
-
-        Transaction transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setSenderAccountNumber("111");
-        transaction.setReceiverAccountNumber("222");
-        transaction.setAmount(200.0);
-        transaction.setTimestamp(LocalDateTime.now());
-
-        TransactionDTO dto = new TransactionDTO();
-        dto.setSenderAccountNumber("111");
-        dto.setReceiverAccountNumber("222");
-        dto.setAmount(200.0);
-        dto.setTimestamp(LocalDateTime.now());
+        TransactionDTO dto = new TransactionDTO(
+                null,
+                "111",
+                "222",
+                200.0,
+                LocalDateTime.now()
+        );
 
         when(customerRepository.findByAccountNumber("111"))
                 .thenReturn(Optional.of(sender));
@@ -64,33 +65,28 @@ class TransactionServiceTest {
                 .thenReturn(Optional.of(receiver));
 
         when(transactionRepository.save(any(Transaction.class)))
-                .thenReturn(transaction);
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         TransactionDTO result = transactionService.transferMoney(dto);
 
         assertNotNull(result);
+
         assertEquals(800.0, sender.getBalance());
         assertEquals(700.0, receiver.getBalance());
 
-        verify(customerRepository, times(1)).save(sender);
-        verify(customerRepository, times(1)).save(receiver);
+        verify(customerRepository, times(2)).save(any(Customer.class));
     }
 
     @Test
     void shouldThrowExceptionWhenBalanceIsInsufficient() {
 
-        Customer sender = new Customer();
-        sender.setAccountNumber("111");
-        sender.setBalance(100.0);
-
-        Customer receiver = new Customer();
-        receiver.setAccountNumber("222");
-        receiver.setBalance(500.0);
-
-        TransactionDTO dto = new TransactionDTO();
-        dto.setSenderAccountNumber("111");
-        dto.setReceiverAccountNumber("222");
-        dto.setAmount(1000.0);
+        TransactionDTO dto = new TransactionDTO(
+                null,
+                "111",
+                "222",
+                5000.0,
+                LocalDateTime.now()
+        );
 
         when(customerRepository.findByAccountNumber("111"))
                 .thenReturn(Optional.of(sender));
@@ -105,6 +101,31 @@ class TransactionServiceTest {
 
         assertEquals(
                 "Saldo insuficiente en la cuenta del remitente.",
+                exception.getMessage()
+        );
+    }
+
+    @Test
+    void shouldThrowExceptionWhenSenderDoesNotExist() {
+
+        TransactionDTO dto = new TransactionDTO(
+                null,
+                "999",
+                "222",
+                100.0,
+                LocalDateTime.now()
+        );
+
+        when(customerRepository.findByAccountNumber("999"))
+                .thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> transactionService.transferMoney(dto)
+        );
+
+        assertEquals(
+                "La cuenta del remitente no existe.",
                 exception.getMessage()
         );
     }

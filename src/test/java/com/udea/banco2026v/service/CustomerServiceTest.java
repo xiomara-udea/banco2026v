@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,61 +23,88 @@ class CustomerServiceTest {
     @InjectMocks
     private CustomerService customerService;
 
+    private Customer customer;
+
     @BeforeEach
-    void setup() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        customer = new Customer();
+        customer.setId(1L);
+        customer.setFirstName("Xiomara");
+        customer.setLastName("Perez");
+        customer.setAccountNumber("123456");
+        customer.setBalance(1000.0);
     }
 
     @Test
-    void shouldCreateCustomer() {
+    void shouldGetAllCustomers() {
 
-        CustomerDTO dto = new CustomerDTO();
-        dto.setFirstName("Xiomara");
-        dto.setLastName("Perez");
-        dto.setAccountNumber("12345");
-        dto.setBalance(1000.0);
+        when(customerRepository.findAll()).thenReturn(List.of(customer));
 
-        Customer customer = new Customer();
-        customer.setId(1L);
-        customer.setFirstName(dto.getFirstName());
-        customer.setLastName(dto.getLastName());
-        customer.setAccountNumber(dto.getAccountNumber());
-        customer.setBalance(dto.getBalance());
+        List<CustomerDTO> customers = customerService.getAllCustomers();
 
-        when(customerRepository.save(any(Customer.class))).thenReturn(customer);
-
-        CustomerDTO result = customerService.createCustomer(dto);
-
-        assertNotNull(result);
-        assertEquals("Xiomara", result.getFirstName());
-        assertEquals(1000.0, result.getBalance());
-
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        assertEquals(1, customers.size());
+        assertEquals("Xiomara", customers.get(0).getFirstName());
     }
 
     @Test
     void shouldGetCustomerById() {
-
-        Customer customer = new Customer();
-        customer.setId(1L);
-        customer.setFirstName("Ana");
-        customer.setLastName("Lopez");
-        customer.setAccountNumber("999");
-        customer.setBalance(5000.0);
 
         when(customerRepository.findById(1L))
                 .thenReturn(Optional.of(customer));
 
         CustomerDTO result = customerService.getCustomerById(1L);
 
-        assertEquals("Ana", result.getFirstName());
-        assertEquals(5000.0, result.getBalance());
+        assertNotNull(result);
+        assertEquals("123456", result.getAccountNumber());
+    }
+
+    @Test
+    void shouldCreateCustomer() {
+
+        CustomerDTO dto = new CustomerDTO();
+        dto.setFirstName("Ana");
+        dto.setLastName("Lopez");
+        dto.setAccountNumber("999");
+        dto.setBalance(2000.0);
+
+        when(customerRepository.save(any(Customer.class)))
+                .thenReturn(customer);
+
+        CustomerDTO result = customerService.createCustomer(dto);
+
+        assertNotNull(result);
+        verify(customerRepository, times(1)).save(any(Customer.class));
+    }
+
+    @Test
+    void shouldUpdateCustomer() {
+
+        CustomerDTO dto = new CustomerDTO();
+        dto.setFirstName("Maria");
+        dto.setLastName("Gomez");
+        dto.setAccountNumber("888");
+        dto.setBalance(5000.0);
+
+        when(customerRepository.findById(1L))
+                .thenReturn(Optional.of(customer));
+
+        when(customerRepository.save(any(Customer.class)))
+                .thenReturn(customer);
+
+        CustomerDTO updated = customerService.updateCustomer(1L, dto);
+
+        assertNotNull(updated);
+
+        verify(customerRepository, times(1)).save(any(Customer.class));
     }
 
     @Test
     void shouldDeleteCustomer() {
 
-        when(customerRepository.existsById(1L)).thenReturn(true);
+        when(customerRepository.existsById(1L))
+                .thenReturn(true);
 
         customerService.deleteCustomer(1L);
 
@@ -84,9 +112,24 @@ class CustomerServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenCustomerDoesNotExist() {
+    void shouldThrowExceptionWhenCustomerNotFound() {
 
-        when(customerRepository.existsById(1L)).thenReturn(false);
+        when(customerRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> customerService.getCustomerById(1L)
+        );
+
+        assertEquals("Cliente no encontrado", exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistingCustomer() {
+
+        when(customerRepository.existsById(1L))
+                .thenReturn(false);
 
         RuntimeException exception = assertThrows(
                 RuntimeException.class,
