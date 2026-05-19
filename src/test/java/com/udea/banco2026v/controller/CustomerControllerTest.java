@@ -5,6 +5,7 @@ import com.udea.banco2026v.dto.CustomerDTO;
 import com.udea.banco2026v.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CustomerController.class)
+@AutoConfigureMockMvc(addFilters = false) // evita problemas de security en CI
 public class CustomerControllerTest {
 
     @Autowired
@@ -56,6 +58,9 @@ public class CustomerControllerTest {
         CustomerDTO customer = new CustomerDTO();
         customer.setId(1L);
         customer.setFirstName("Juan");
+        customer.setLastName("Perez");
+        customer.setAccountNumber("123");
+        customer.setBalance(5000.0);
 
         when(customerService.getCustomerById(1L))
                 .thenReturn(customer);
@@ -68,19 +73,25 @@ public class CustomerControllerTest {
     @Test
     void testCreateCustomer() throws Exception {
 
-        CustomerDTO customer = new CustomerDTO();
-        customer.setId(1L);
-        customer.setFirstName("Juan");
-        customer.setLastName("Perez");
-        customer.setAccountNumber("123");
-        customer.setBalance(5000.0); // ✅ FIX
+        CustomerDTO request = new CustomerDTO();
+        request.setFirstName("Juan");
+        request.setLastName("Perez");
+        request.setAccountNumber("123");
+        request.setBalance(5000.0);
+
+        CustomerDTO response = new CustomerDTO();
+        response.setId(1L);
+        response.setFirstName("Juan");
+        response.setLastName("Perez");
+        response.setAccountNumber("123");
+        response.setBalance(5000.0);
 
         when(customerService.createCustomer(any(CustomerDTO.class)))
-                .thenReturn(customer);
+                .thenReturn(response);
 
         mockMvc.perform(post("/api/customers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customer)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Juan"));
     }
@@ -88,15 +99,25 @@ public class CustomerControllerTest {
     @Test
     void testUpdateCustomer() throws Exception {
 
-        CustomerDTO customer = new CustomerDTO();
-        customer.setFirstName("Carlos");
+        CustomerDTO request = new CustomerDTO();
+        request.setFirstName("Carlos");
+        request.setLastName("Lopez");
+        request.setAccountNumber("456");
+        request.setBalance(8000.0);
+
+        CustomerDTO response = new CustomerDTO();
+        response.setId(1L);
+        response.setFirstName("Carlos");
+        response.setLastName("Lopez");
+        response.setAccountNumber("456");
+        response.setBalance(8000.0);
 
         when(customerService.updateCustomer(anyLong(), any(CustomerDTO.class)))
-                .thenReturn(customer);
+                .thenReturn(response);
 
         mockMvc.perform(put("/api/customers/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(customer)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Carlos"));
     }
