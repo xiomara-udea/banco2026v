@@ -74,6 +74,23 @@ class CustomerServiceTest {
     }
 
     @Test
+    void testCustomerDTO_GettersSetters() {
+        CustomerDTO dto = new CustomerDTO();
+
+        dto.setId(1L);
+        dto.setFirstName("Juan");
+        dto.setLastName("Perez");
+        dto.setAccountNumber("123");
+        dto.setBalance(5000.0);
+
+        assertEquals(1L, dto.getId());
+        assertEquals("Juan", dto.getFirstName());
+        assertEquals("Perez", dto.getLastName());
+        assertEquals("123", dto.getAccountNumber());
+        assertEquals(5000.0, dto.getBalance());
+    }
+
+    @Test
     void testUpdateCustomer_Success() {
         Customer customer = new Customer();
         customer.setId(1L);
@@ -126,5 +143,11 @@ class CustomerServiceTest {
         CustomerDTO result = customerService.createCustomer(dto);
 
         assertEquals("Ana", result.getFirstName());
+    }
+
+    @Test
+    void testCustomerDTO_NoArgsConstructor() {
+        CustomerDTO dto = new CustomerDTO();
+        assertNotNull(dto);
     }
 }

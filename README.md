@@ -10,7 +10,7 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=xiomara-udea_banco2026v&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=xiomara-udea_banco2026v)
 
-BIENVENIDO A MI APLICATION
+BIENVENIDO A MI APLICACIÓN
 
 API REST desarrollada con Spring Boot para la gestión de operaciones bancarias.
 
