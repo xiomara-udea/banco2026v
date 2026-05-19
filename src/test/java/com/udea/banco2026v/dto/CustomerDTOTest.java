@@ -7,20 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerDTOTest {
 
     @Test
-    void testGettersAndSetters() {
+    void testCustomerDTO() {
 
         CustomerDTO dto = new CustomerDTO();
 
         dto.setId(1L);
-        dto.setFirstName("Ana");
-        dto.setLastName("Lopez");
-        dto.setAccountNumber("12345");
+        dto.setFirstName("Juan");
+        dto.setLastName("Perez");
+        dto.setAccountNumber("123");
         dto.setBalance(5000.0);
 
         assertEquals(1L, dto.getId());
-        assertEquals("Ana", dto.getFirstName());
-        assertEquals("Lopez", dto.getLastName());
-        assertEquals("12345", dto.getAccountNumber());
+        assertEquals("Juan", dto.getFirstName());
+        assertEquals("Perez", dto.getLastName());
+        assertEquals("123", dto.getAccountNumber());
         assertEquals(5000.0, dto.getBalance());
     }
 }

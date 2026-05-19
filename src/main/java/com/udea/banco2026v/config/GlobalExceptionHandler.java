@@ -1,4 +1,4 @@
-package com.udea.banco2026v.exception;
+package com.udea.banco2026v.config;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
