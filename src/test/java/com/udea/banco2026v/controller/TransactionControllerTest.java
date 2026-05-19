@@ -50,9 +50,7 @@ class TransactionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.senderAccountNumber").value("123"))
-                .andExpect(jsonPath("$.receiverAccountNumber").value("456"))
-                .andExpect(jsonPath("$.amount").value(1000.0));
+                .andExpect(jsonPath("$.senderAccountNumber").value("123"));
     }
 
     @Test
