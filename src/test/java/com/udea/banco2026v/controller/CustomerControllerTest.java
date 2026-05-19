@@ -5,11 +5,9 @@ import com.udea.banco2026v.dto.CustomerDTO;
 import com.udea.banco2026v.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -19,17 +17,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@WebMvcTest(CustomerController.class)
 public class CustomerControllerTest {
 
     @Autowired
@@ -65,9 +56,6 @@ public class CustomerControllerTest {
         CustomerDTO customer = new CustomerDTO();
         customer.setId(1L);
         customer.setFirstName("Juan");
-        customer.setLastName("Perez");
-        customer.setAccountNumber("123");
-        customer.setBalance(5000.0);
 
         when(customerService.getCustomerById(1L))
                 .thenReturn(customer);
@@ -85,7 +73,7 @@ public class CustomerControllerTest {
         customer.setFirstName("Juan");
         customer.setLastName("Perez");
         customer.setAccountNumber("123");
-        customer.setBalance(5000.0);
+        customer.setBalance(5000.0); // ✅ FIX
 
         when(customerService.createCustomer(any(CustomerDTO.class)))
                 .thenReturn(customer);
@@ -101,11 +89,7 @@ public class CustomerControllerTest {
     void testUpdateCustomer() throws Exception {
 
         CustomerDTO customer = new CustomerDTO();
-        customer.setId(1L);
         customer.setFirstName("Carlos");
-        customer.setLastName("Lopez");
-        customer.setAccountNumber("456");
-        customer.setBalance(8000.0);
 
         when(customerService.updateCustomer(anyLong(), any(CustomerDTO.class)))
                 .thenReturn(customer);
