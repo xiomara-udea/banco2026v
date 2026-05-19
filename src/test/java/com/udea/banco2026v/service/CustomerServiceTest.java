@@ -74,6 +74,23 @@ class CustomerServiceTest {
     }
 
     @Test
+    void testCustomerDTO_AllFields() {
+        CustomerDTO dto = new CustomerDTO();
+
+        dto.setId(1L);
+        dto.setFirstName("Juan");
+        dto.setLastName("Perez");
+        dto.setAccountNumber("123");
+        dto.setBalance(5000.0);
+
+        assertEquals(1L, dto.getId());
+        assertEquals("Juan", dto.getFirstName());
+        assertEquals("Perez", dto.getLastName());
+        assertEquals("123", dto.getAccountNumber());
+        assertEquals(5000.0, dto.getBalance());
+    }
+
+    @Test
     void testCustomerDTO_GettersSetters() {
         CustomerDTO dto = new CustomerDTO();
 

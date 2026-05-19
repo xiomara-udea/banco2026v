@@ -130,4 +130,19 @@ public class CustomerControllerTest {
         mockMvc.perform(delete("/api/customers/1"))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void testCreateCustomer_BalanceNull_ShouldFail() throws Exception {
+
+        CustomerDTO request = new CustomerDTO();
+        request.setFirstName("Juan");
+        request.setLastName("Perez");
+        request.setAccountNumber("123");
+        request.setBalance(null);
+
+        mockMvc.perform(post("/api/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
 }

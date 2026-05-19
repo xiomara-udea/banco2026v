@@ -1,5 +1,7 @@
 package com.udea.banco2026v.dto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomerDTO {
 
     private Long id;
